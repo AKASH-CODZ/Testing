@@ -19,6 +19,7 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -149,8 +150,12 @@ local function OnInventoryUpdated(inventory)
 	-- ✓ FIX #5: Force visible state after items load
 	if inventoryGui then
 		inventoryGui.Visible = true
+		inventoryGui.BackgroundTransparency = 0.2
 		scrollingContainer.Visible = true
+		scrollingContainer.BackgroundTransparency = 0.2
 		searchInput.Visible = true
+		searchInput.BackgroundTransparency = 0
+		searchInput.TextTransparency = 0
 	end
 
 	-- Initialize the search bar here to avoid race condition
@@ -218,29 +223,54 @@ ButtonAnimationController:setupNeonGlow(closeButton)
 print("[InventoryUIManager] Button animation initialized")
 
 -- ============================================================================
--- SECTION 6: CLOSE BUTTON HANDLER - FIXED ✓
+-- SECTION 6: INVENTORY TOGGLE FUNCTION
 -- ============================================================================
 
--- ✓ FIX #1: TweenSize now calls on Frame (inventoryGui), not ScreenGui
-local function CloseInventory()
-	print("[InventoryUIManager] Close button clicked")
+local originalSize = inventoryGui.Size
+local isOpen = false
 
-	if inventoryGui and inventoryGui:IsA("Frame") then
+local function ToggleInventory()
+	if not inventoryGui or not inventoryGui:IsA("Frame") then
+		warn("[InventoryUIManager] inventoryGui is not a Frame, cannot tween")
+		return
+	end
+
+	isOpen = not isOpen
+
+	if isOpen then
+		print("[InventoryUIManager] Opening inventory")
+		inventoryGui.Visible = true
+		inventoryGui:TweenSize(
+			originalSize,
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			0.3,
+			true
+		)
+	else
+		print("[InventoryUIManager] Closing inventory")
 		inventoryGui:TweenSize(
 			UDim2.new(0, 0, 0, 0),
 			Enum.EasingDirection.In,
 			Enum.EasingStyle.Quad,
 			0.3,
-			true
+			true,
+			function()
+				inventoryGui.Visible = false
+			end
 		)
-		print("[InventoryUIManager] Inventory closing with animation")
-	else
-		warn("[InventoryUIManager] inventoryGui is not a Frame, cannot TweenSize")
-		inventoryGui.Visible = false
 	end
 end
 
-closeButton.MouseButton1Click:Connect(CloseInventory)
+closeButton.MouseButton1Click:Connect(ToggleInventory)
+
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+	if gameProcessedEvent then return end
+
+	if input.KeyCode == Enum.KeyCode.G then
+		ToggleInventory()
+	end
+end)
 
 -- ============================================================================
 -- SECTION 7: STARTUP STATUS
