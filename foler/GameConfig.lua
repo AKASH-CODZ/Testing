@@ -140,51 +140,82 @@ GameConfig.DefaultPlayerData = {
 }
 
 -- ============================================================================
--- TELEPORT MODES (Preserved - do not change Place IDs)
+-- TELEPORT MODES CONFIGURATION
 -- ============================================================================
+GameConfig.TeleportSettings = {
+	-- Teleport retry logic
+	ATTEMPT_LIMIT = 3,
+	RETRY_DELAY = 3,
+	FLOOD_DELAY = 15,
+
+	-- Layer 1 Security: Rate limit
+	SECURITY_COOLDOWN = 5,
+
+	-- Nonce validation
+	NONCE_TTL = 60,
+
+	-- Valid game states for teleporting
+	VALID_TELEPORT_STATES = {
+		["Lobby"] = true,
+		["Idle"] = true,
+		["MainMenu"] = true,
+	},
+}
 
 GameConfig.TeleportModes = {
-	["StandardMode"] = {
-		PlaceID = 123456789,
-		MinPlayers = 2,
-		MaxPlayers = 8,
-		Type = "Direct",
-		RequireReserveServer = false,
-		AllowLoadout = true
-	},
-	["TeamDeathmatch"] = {
-		PlaceID = 987654321,
-		MinPlayers = 4,
-		MaxPlayers = 16,
-		Type = "Matchmaking",
-		RequireReserveServer = false,
-		AllowLoadout = true
-	},
-	["Training"] = {
-		PlaceID = 111111111,
-		MinPlayers = 1,
-		MaxPlayers = 2,
-		Type = "Direct",
-		RequireReserveServer = false,
-		AllowLoadout = true
-	},
+	-- ===== DIRECT TELEPORT MODES (Solo - 1 player) =====
 	["HardcoreMode"] = {
-		PlaceID = 222222222,
-		MinPlayers = 2,
-		MaxPlayers = 4,
+		PlaceID = 114846565016250,
+		MinPlayers = 1,
+		MaxPlayers = 1,
 		Type = "Direct",
-		RequireReserveServer = true,
-		AllowLoadout = true
+		RequireReserveServer = false,
+		AllowLoadout = true,
+		Description = "Solo hardcore challenge"
 	},
-	["SquadMission"] = {
-		PlaceID = 333333333,
-		MinPlayers = 4,
+
+	["Training"] = {
+		PlaceID = 114846565016250, -- CHANGE THIS TO YOUR TRAINING PLACE ID
+		MinPlayers = 1,
+		MaxPlayers = 1,
+		Type = "Direct",
+		RequireReserveServer = false,
+		AllowLoadout = true,
+		Description = "Solo training mode"
+	},
+
+	-- ===== MATCHMAKING MODES (2-6 players) =====
+	["StandardMode"] = {
+		PlaceID = 114846565016250, -- CHANGE THIS TO YOUR STANDARD MODE PLACE ID
+		MinPlayers = 2,
 		MaxPlayers = 4,
 		Type = "Matchmaking",
 		RequireReserveServer = true,
-		AllowLoadout = true
-	}
+		AllowLoadout = true,
+		Description = "2-4 player matches"
+	},
+
+	["TeamDeathmatch"] = {
+		PlaceID = 114846565016250, -- CHANGE THIS TO YOUR TDM PLACE ID
+		MinPlayers = 4,
+		MaxPlayers = 6,
+		Type = "Matchmaking",
+		RequireReserveServer = true,
+		AllowLoadout = true,
+		Description = "4-6 player team match"
+	},
+
+	["SquadMission"] = {
+		PlaceID = 114846565016250, -- CHANGE THIS TO YOUR SQUAD PLACE ID
+		MinPlayers = 2,
+		MaxPlayers = 4,
+		Type = "Matchmaking",
+		RequireReserveServer = true,
+		AllowLoadout = true,
+		Description = "2-4 player squad"
+	},
 }
+
 
 -- ============================================================================
 -- MIGRATE: Old format (bool) to new format (count)

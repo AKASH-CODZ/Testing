@@ -1,27 +1,98 @@
 --[[
 ================================================================================
-  InventoryValidator.lua - ENHANCED WITH LOGGING & FUTURE-PROOFING
+  SecurityManager.lua - Consolidated Security Module
 ================================================================================
-  Location: ReplicatedStorage/Modules/InventoryValidator
-  
   PURPOSE:
-  - Validate inventory structure and loadouts
-  - Enhanced logging with Logger integration
-  - Future-proof with full function exports
-  - Supports both ValidateInventory and ValidateLoadout patterns
-  
-  ALL UPDATES:
-  ✓ ValidateLoadout function added (preferred pattern)
-  ✓ ValidateInventory function (compatibility)
-  ✓ Enhanced Logger output at all steps
-  ✓ All functions exported in return table
-  ✓ Type checking & error handling
-  ✓ Future-proof architecture
+  - Consolidates all security-related logic, including nonce validation
+    and inventory validation, into a single, robust module.
+  - Upholds the "Never trust the client" principle by providing a single
+    source of truth for all security checks.
 ================================================================================
 ]]
 
+local HttpService = game:GetService("HttpService")
+local MemoryStoreService = game:GetService("MemoryStoreService")
 local Logger = require(script.Parent:WaitForChild("Logger"))
-local InventoryValidator = {}
+local SecurityManager = {}
+
+local TeleportNonces = MemoryStoreService:GetSortedMap("TeleportNonces")
+
+-- ============================================================================
+-- HELPER: Retry with exponential backoff
+-- ============================================================================
+
+local function RetryWithBackoff(operation, maxRetries, initialDelay)
+	maxRetries = maxRetries or 3
+	initialDelay = initialDelay or 1
+
+	for attempt = 1, maxRetries do
+		local success, result = pcall(operation)
+		if success then
+			return true, result
+		end
+
+		if attempt < maxRetries then
+			local delay = initialDelay * (2 ^ (attempt - 1))
+			Logger:Debug("MemoryStore", string.format("Retry %d/%d, wait %.1fs", attempt, maxRetries, delay))
+			task.wait(delay)
+		end
+	end
+
+	return false, "Failed after " .. maxRetries .. " attempts"
+end
+
+-- ============================================================================
+-- NONCE GENERATION (OUTBOUND)
+-- ============================================================================
+
+function SecurityManager:GenerateAndSaveNonce(player, ttl)
+	ttl = ttl or 60
+	local nonce = HttpService:GenerateGUID(false)
+
+	local success, err = RetryWithBackoff(function()
+		TeleportNonces:SetAsync(nonce, player.UserId, ttl)
+	end, 3, 1)
+
+	if not success then
+		Logger:Error("Nonce", string.format("Failed to generate nonce for %s: %s", player.Name, err))
+		return nil
+	end
+
+	Logger:Debug("Nonce", string.format("Generated nonce for %s (TTL: %ds)", player.Name, ttl))
+	return nonce
+end
+
+-- ============================================================================
+-- NONCE VALIDATION (INBOUND)
+-- ============================================================================
+
+function SecurityManager:ValidateNonce(player, nonce)
+	if not nonce or type(nonce) ~= "string" then
+		Logger:Warn("Nonce", string.format("Invalid nonce format for %s", player.Name))
+		return false
+	end
+
+	local success, storedUserId = RetryWithBackoff(function()
+		return TeleportNonces:GetAsync(nonce)
+	end, 3, 1)
+
+	if not success then
+		Logger:Error("Nonce", string.format("MemoryStore query failed for %s", player.Name))
+		return false
+	end
+
+	if storedUserId ~= player.UserId then
+		Logger:Warn("Nonce", string.format("Validation FAILED for %s (UserId mismatch)", player.Name))
+		return false
+	end
+
+	RetryWithBackoff(function()
+		TeleportNonces:RemoveAsync(nonce)
+	end, 2, 0.5)
+
+	Logger:Info("Nonce", string.format("Nonce validated for %s", player.Name))
+	return true
+end
 
 -- ============================================================================
 -- CONFIGURATION
@@ -34,7 +105,7 @@ local VALID_ITEM_TYPES = {["table"] = true, ["string"] = true}
 -- ============================================================================
 -- VALIDATE INVENTORY STRUCTURE
 -- ============================================================================
-function InventoryValidator:ItemExists(inventory, itemId)
+function SecurityManager:ItemExists(inventory, itemId)
 	if not inventory or type(inventory) ~= "table" then
 		Logger:Warn("InventoryValidator", "Cannot check ItemExists - inventory invalid")
 		return false
@@ -51,7 +122,7 @@ function InventoryValidator:ItemExists(inventory, itemId)
 	return false
 end
 
-function InventoryValidator:GetAllItems(inventory)
+function SecurityManager:GetAllItems(inventory)
 	if not inventory or type(inventory) ~= "table" then
 		Logger:Warn("InventoryValidator", "Cannot get all items - inventory invalid")
 		return {}
@@ -70,7 +141,7 @@ function InventoryValidator:GetAllItems(inventory)
 end
 
 
-function InventoryValidator:ValidateInventory(inventory)
+function SecurityManager:ValidateInventory(inventory)
 	if not inventory then
 		Logger:Error("InventoryValidator", "Inventory is nil")
 		return false
@@ -122,7 +193,7 @@ end
 -- VALIDATE LOADOUT (Preferred pattern)
 -- ============================================================================
 
-function InventoryValidator:ValidateLoadout(playerInventory, loadout)
+function SecurityManager:ValidateLoadout(playerInventory, loadout)
 	if not playerInventory then
 		Logger:Error("InventoryValidator", "PlayerInventory is nil for loadout validation")
 		return false
@@ -156,7 +227,7 @@ end
 -- VALIDATE ITEM DATA
 -- ============================================================================
 
-function InventoryValidator:ValidateItemData(itemId, itemData)
+function SecurityManager:ValidateItemData(itemId, itemData)
 	if not itemId or type(itemId) ~= "string" then
 		Logger:Warn("InventoryValidator", "Invalid itemId: " .. tostring(itemId))
 		return false
@@ -178,36 +249,10 @@ function InventoryValidator:ValidateItemData(itemId, itemData)
 end
 
 -- ============================================================================
--- VALIDATE INVENTORY SCHEMA (For strict mode)
--- ============================================================================
-
-function InventoryValidator:ValidateSchema(inventory, schema)
-	if not schema then
-		Logger:Info("InventoryValidator", "No schema provided, using basic validation")
-		return self:ValidateInventory(inventory)
-	end
-
-	for key, expectedType in pairs(schema) do
-		if not inventory[key] then
-			Logger:Error("InventoryValidator", "Schema violation: Missing key " .. key)
-			return false
-		end
-
-		if type(inventory[key]) ~= expectedType then
-			Logger:Error("InventoryValidator", "Schema violation: " .. key .. " is " .. type(inventory[key]) .. ", expected " .. expectedType)
-			return false
-		end
-	end
-
-	Logger:Info("InventoryValidator", "Schema validation PASSED ✓")
-	return true
-end
-
--- ============================================================================
 -- DEBUG: Print Inventory Structure
 -- ============================================================================
 
-function InventoryValidator:DebugPrintInventory(inventory, playerName)
+function SecurityManager:DebugPrintInventory(inventory, playerName)
 	if not inventory then
 		Logger:Warn("InventoryValidator", "Cannot debug nil inventory for " .. tostring(playerName))
 		return
@@ -231,28 +276,5 @@ function InventoryValidator:DebugPrintInventory(inventory, playerName)
 	Logger:Info("InventoryValidator", "[DEBUG] " .. tostring(playerName) .. " inventory: " .. ownedCount .. " owned, " .. equippedCount .. " equipped")
 end
 
--- ============================================================================
--- STARTUP & EXPORT
--- ============================================================================
 
-print("[InventoryValidator] Module loaded successfully")
-print("[InventoryValidator] Available functions:")
-print("  - ValidateInventory(inventory)")
-print("  - ValidateLoadout(playerInventory, loadout)")
-print("  - ValidateItemData(itemId, itemData)")
-print("  - ValidateSchema(inventory, schema)")
-print("  - DebugPrintInventory(inventory, playerName)")
-
--- ============================================================================
--- RETURN - CRITICAL: All functions must be exported
--- ============================================================================
-
-return {
-	ValidateInventory = InventoryValidator.ValidateInventory,
-	ValidateLoadout = InventoryValidator.ValidateLoadout,
-	ValidateItemData = InventoryValidator.ValidateItemData,
-	ValidateSchema = InventoryValidator.ValidateSchema,
-	DebugPrintInventory = InventoryValidator.DebugPrintInventory,
-	ItemExists        = InventoryValidator.ItemExists,
-	GetAllItems       = InventoryValidator.GetAllItems,
-}
+return SecurityManager
