@@ -149,13 +149,14 @@ local function OnInventoryUpdated(inventory)
 
 	-- ✓ FIX #5: Force visible state after items load
 	if inventoryGui then
-		inventoryGui.Visible = true
-		inventoryGui.BackgroundTransparency = 0.2
+		inventoryGui.Visible = false -- Start closed
+		inventoryGui.BackgroundTransparency = 0.1
 		scrollingContainer.Visible = true
-		scrollingContainer.BackgroundTransparency = 0.2
+		scrollingContainer.BackgroundTransparency = 1 -- The container itself should be invisible
 		searchInput.Visible = true
-		searchInput.BackgroundTransparency = 0
+		searchInput.BackgroundTransparency = 0.5
 		searchInput.TextTransparency = 0
+		searchInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 	end
 
 	-- Initialize the search bar here to avoid race condition
