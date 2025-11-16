@@ -149,12 +149,19 @@ local function OnInventoryUpdated(inventory)
 	-- ✓ FIX #5: Force visible state after items load
 	if inventoryGui then
 		inventoryGui.Visible = true
+		scrollingContainer.Visible = true
+		searchInput.Visible = true
 	end
 
 	-- Initialize the search bar here to avoid race condition
 	if inventory and inventory.allItems then
-		print("[InventoryUIManager] Initializing search with " .. #inventory.allItems .. " items")
-		local searchState = SearchBarController:initialize(searchInput, inventory.allItems)
+		local allItemsList = {}
+		for _, itemData in pairs(inventory.allItems) do
+			table.insert(allItemsList, itemData)
+		end
+
+		print("[InventoryUIManager] Initializing search with " .. #allItemsList .. " items")
+		local searchState = SearchBarController:initialize(searchInput, allItemsList)
 		if searchState then
 			searchState.onSearchResult = function(filteredList)
 				print("[InventoryUIManager] Search results: " .. #filteredList .. " items")
