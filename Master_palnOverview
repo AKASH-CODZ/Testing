@@ -12,9 +12,44 @@ A robust game teleportation, loadout, and security system supporting multi-place
 
 ## Game Architecture
 
-- **Modular design**: Each core script/module serves a clear function—easy to extend, upgrade, or swap.
-- **Secure data transfer**: All important session/player data is server-generated and validated.
-- **Admin tools**: Built-in GUIs and server logs for in-depth monitoring and QA.
+- **Two-Place Structure:** The game is divided into two separate places: the **Lobby** and the **Teleport** place. This provides a clean separation of concerns and allows for a more robust and scalable architecture.
+- **Modular Design:** Each core script/module serves a clear function, making it easy to extend, upgrade, or swap.
+- **Secure Data Transfer:** All important session and player data is server-generated and validated.
+
+***
+
+## Project Structure
+
+The project is organized into two main folders: `Lobby` and `Teleport`.
+
+### `Lobby`
+
+This folder contains all the scripts and modules necessary for the lobby experience.
+
+*   **`TeleportRequestHandler.lua`:** Listens for teleport requests from the client and initiates the teleport process.
+*   **`StandardModeButton.lua`:** Handles the functionality of a UI button that initiates a teleport to a specific game mode.
+*   **`InventoryUIManager.lua`:** Manages the inventory UI, including the search bar, item display, and toggle functionality.
+*   **`InventoryDataProvider.lua`:** Manages inventory data on the client side.
+*   **`ButtonAnimationController.lua`:** Handles all button animations and effects.
+*   **`ItemContainerManager.lua`:** Manages the creation and rendering of inventory item UI elements.
+*   **`SearchBarController.lua`:** Manages the search bar functionality, including filtering and debouncing.
+
+### `Teleport`
+
+This folder contains all the scripts and modules necessary for the gameplay experience in the teleported place.
+
+*   **`GameplayManager.lua`:** Manages the gameplay logic, creates the "Win" and "Loss" blocks, and securely updates player stats and rewards.
+*   **`ReturnToLobby.lua`:** Manages the "Return to Lobby" button and securely requests a teleport back to the lobby.
+
+### Common Modules
+
+These core modules are duplicated in both the `Lobby` and `Teleport` folders to ensure that each place can function independently.
+
+*   **`PlayerManager.lua`:** Loads, saves, and manages all player data.
+*   **`SecurityManager.lua`:** Consolidates all security-related logic, including nonce validation, inventory validation, and rate-limiting.
+*   **`GameConfig.lua`:** A single source of truth for all static config and data.
+*   **`GameStateManager.lua`:** Manages the state of each player.
+*   **`Logger.lua`:** Provides a simple and robust logging system.
 
 ***
 
@@ -26,7 +61,7 @@ A robust game teleportation, loadout, and security system supporting multi-place
 
 ### 2. **SecurityManager**
 - **Purpose:** Consolidates all security-related logic. It creates and validates single-use nonces for teleports and validates all inventory and loadout data to prevent exploits.
-- **Features:** Nonce generation and validation, inventory and loadout validation.
+- **Features:** Nonce generation and validation, inventory and loadout validation, and rate-limiting.
 
 ### 3. **PlayerManager (PlayerDataManager)**
 - **Purpose:** Loads, saves, and manages all player data during a server session. It now includes mid-session auto-saving and a retry mechanism for robust data handling.
@@ -39,11 +74,6 @@ A robust game teleportation, loadout, and security system supporting multi-place
 ### 5. **QueueManager**
 - **Purpose:** Manages matchmaking/group queueing for team/competitive teleports.
 - **Features:** Automatically groups, checks, and teleports pre-validated teams as one.
-
-### 6. **SecurityLayers**
-- **Purpose:** Core of all anti-abuse logic (rate limiting, game state checks, whitelisting).
-- **Features:** Fully upgradeable for new security policies, unlocks, bans, etc.
-
 
 ***
 
