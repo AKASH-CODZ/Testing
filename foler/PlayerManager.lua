@@ -62,28 +62,42 @@ end
 function PlayerDataManager:LoadData(player)
 	local userId = player.UserId
 	local data = nil
+	local success, result
 
-	-- Try primary store
-	local success, result = pcall(function()
-		return PlayerDataStore:GetAsync("Player_" .. userId)
-	end)
+	for i = 1, 3 do
+		success, result = pcall(function()
+			return PlayerDataStore:GetAsync("Player_" .. userId)
+		end)
+		if success then break end
+		wait(1)
+	end
 
 	if success and result then
 		Logger:Info("PlayerManager", "Loaded primary: " .. player.Name, player)
 		data = GameConfig:MigrateOldFormat(result)
 	else
 		-- Primary failed, try backup
-		local backupSuccess, backupResult = pcall(function()
-			return BackupDataStore:GetAsync("Player_" .. userId)
-		end)
+		for i = 1, 3 do
+			success, result = pcall(function()
+				return BackupDataStore:GetAsync("Player_" .. userId)
+			end)
+			if success then break end
+			wait(1)
+		end
 
-		if backupSuccess and backupResult then
+		if success and result then
 			Logger:Warn("PlayerManager", "Primary failed, restored from backup: " .. player.Name, player)
-			data = GameConfig:MigrateOldFormat(backupResult)
+			data = GameConfig:MigrateOldFormat(result)
 		else
-			-- Both failed, use defaults
-			Logger:Info("PlayerManager", "No data, using defaults: " .. player.Name, player)
-			data = DeepCopy(GameConfig.DefaultPlayerData)
+			-- Both failed, check if player is new
+			local isNewPlayer = not player:HasAppearanceLoaded() -- A simple way to check if a player is new
+			if isNewPlayer then
+				Logger:Info("PlayerManager", "New player, using defaults: " .. player.Name, player)
+				data = DeepCopy(GameConfig.DefaultPlayerData)
+			else
+				player:Kick("Failed to load your data. Please rejoin.")
+				return
+			end
 		end
 	end
 
@@ -187,6 +201,23 @@ function PlayerDataManager:EmergencySave(player)
 		end)
 	end
 end
+
+-- ============================================================================
+-- AUTO-SAVING
+-- ============================================================================
+
+local function AutoSave()
+	while wait(60) do
+		for userId, data in pairs(sessionData) do
+			local player = Players:GetPlayerByUserId(userId)
+			if player then
+				PlayerDataManager:SaveData(player, data)
+			end
+		end
+	end
+end
+
+coroutine.wrap(AutoSave)()
 
 -- ============================================================================
 -- CLEANUP

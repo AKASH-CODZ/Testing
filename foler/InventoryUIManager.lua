@@ -19,6 +19,7 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -148,7 +149,34 @@ local function OnInventoryUpdated(inventory)
 
 	-- ✓ FIX #5: Force visible state after items load
 	if inventoryGui then
-		inventoryGui.Visible = true
+		inventoryGui.Visible = false -- Start closed
+		inventoryGui.BackgroundTransparency = 0.1
+		scrollingContainer.Visible = true
+		scrollingContainer.BackgroundTransparency = 1 -- The container itself should be invisible
+		searchInput.Visible = true
+		searchInput.BackgroundTransparency = 0.5
+		searchInput.TextTransparency = 0
+		searchInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+	end
+
+	-- Initialize the search bar here to avoid race condition
+	if inventory and inventory.allItems then
+		local allItemsList = {}
+		for _, itemData in pairs(inventory.allItems) do
+			table.insert(allItemsList, itemData)
+		end
+
+		print("[InventoryUIManager] Initializing search with " .. #allItemsList .. " items")
+		local searchState = SearchBarController:initialize(searchInput, allItemsList)
+		if searchState then
+			searchState.onSearchResult = function(filteredList)
+				print("[InventoryUIManager] Search results: " .. #filteredList .. " items")
+				ItemContainerManager:renderItems(containerState, filteredList)
+			end
+			print("[InventoryUIManager] Search bar ready")
+		else
+			warn("[InventoryUIManager] Failed to initialize search bar")
+		end
 	end
 end
 
@@ -186,36 +214,7 @@ InventoryDataProvider:Initialize(
 -- SECTION 4: INITIALIZATION - PHASE 3: Setup Search Bar (Async)
 -- ============================================================================
 
-task.spawn(function()
-	print("[InventoryUIManager] Initializing search bar...")
-
-	local loaded = InventoryDataProvider:WaitUntilLoaded(10)
-
-	if not loaded then
-		warn("[InventoryUIManager] Timeout waiting for inventory")
-		return
-	end
-
-	local inventory = InventoryDataProvider:GetInventory()
-	if not inventory or not inventory.allItems then
-		warn("[InventoryUIManager] No inventory or allItems found")
-		return
-	end
-
-	local allItems = inventory.allItems
-	print("[InventoryUIManager] Initializing search with " .. #allItems .. " items")
-
-	local searchState = SearchBarController:initialize(searchInput, allItems)
-	if searchState then
-		searchState.onSearchResult = function(filteredList)
-			print("[InventoryUIManager] Search results: " .. #filteredList .. " items")
-			ItemContainerManager:renderItems(containerState, filteredList)
-		end
-		print("[InventoryUIManager] Search bar ready")
-	else
-		warn("[InventoryUIManager] Failed to initialize search bar")
-	end
-end)
+-- The search bar is now initialized in the OnInventoryUpdated callback
 
 -- ============================================================================
 -- SECTION 5: INITIALIZATION - PHASE 4: Setup Button Animations
@@ -225,29 +224,54 @@ ButtonAnimationController:setupNeonGlow(closeButton)
 print("[InventoryUIManager] Button animation initialized")
 
 -- ============================================================================
--- SECTION 6: CLOSE BUTTON HANDLER - FIXED ✓
+-- SECTION 6: INVENTORY TOGGLE FUNCTION
 -- ============================================================================
 
--- ✓ FIX #1: TweenSize now calls on Frame (inventoryGui), not ScreenGui
-local function CloseInventory()
-	print("[InventoryUIManager] Close button clicked")
+local originalSize = inventoryGui.Size
+local isOpen = false
 
-	if inventoryGui and inventoryGui:IsA("Frame") then
+local function ToggleInventory()
+	if not inventoryGui or not inventoryGui:IsA("Frame") then
+		warn("[InventoryUIManager] inventoryGui is not a Frame, cannot tween")
+		return
+	end
+
+	isOpen = not isOpen
+
+	if isOpen then
+		print("[InventoryUIManager] Opening inventory")
+		inventoryGui.Visible = true
+		inventoryGui:TweenSize(
+			originalSize,
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			0.3,
+			true
+		)
+	else
+		print("[InventoryUIManager] Closing inventory")
 		inventoryGui:TweenSize(
 			UDim2.new(0, 0, 0, 0),
 			Enum.EasingDirection.In,
 			Enum.EasingStyle.Quad,
 			0.3,
-			true
+			true,
+			function()
+				inventoryGui.Visible = false
+			end
 		)
-		print("[InventoryUIManager] Inventory closing with animation")
-	else
-		warn("[InventoryUIManager] inventoryGui is not a Frame, cannot TweenSize")
-		inventoryGui.Visible = false
 	end
 end
 
-closeButton.MouseButton1Click:Connect(CloseInventory)
+closeButton.MouseButton1Click:Connect(ToggleInventory)
+
+UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+	if gameProcessedEvent then return end
+
+	if input.KeyCode == Enum.KeyCode.G then
+		ToggleInventory()
+	end
+end)
 
 -- ============================================================================
 -- SECTION 7: STARTUP STATUS
