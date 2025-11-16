@@ -64,7 +64,7 @@ local function OnInventoryUpdated(inventory)
 	end
 
 	inventoryGui.Visible = false
-	inventoryGui.BackgroundTransparency = 1
+	inventoryGui.BackgroundTransparency = 0.1
 	scrollingContainer.Visible = true
 	scrollingContainer.BackgroundTransparency = 1
 	searchInput.Visible = true

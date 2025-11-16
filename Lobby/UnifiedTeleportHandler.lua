@@ -74,6 +74,26 @@ function UnifiedTeleportHandler:TeleportToMatch(player, placeId)
 	return true
 end
 
+function UnifiedTeleportHandler:TeleportToLobby(player)
+	local inventory = PlayerDataManager:GetData(player)
+	if not inventory then return false end
+
+	local gameConfig = require(game:GetService("ServerStorage"):WaitForChild("MyServerFolder"):WaitForChild("GameConfig"))
+	local lobbyPlaceId = gameConfig.TeleportModes["Lobby"].PlaceID
+
+	local nonce = SecurityManager:GenerateAndSaveNonce(player, 60)
+	if not nonce then return false end
+
+	local teleportData = {
+		inventory = inventory,
+		equipped = inventory.equipped,
+		nonce = nonce,
+	}
+
+	TeleportService:Teleport(lobbyPlaceId, player, teleportData)
+	return true
+end
+
 -- = '==========================================================================
 -- EVENT CONNECTIONS
 -- ============================================================================

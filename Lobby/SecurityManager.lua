@@ -3,8 +3,8 @@
   SecurityManager.lua - Consolidated Security Module
 ================================================================================
   PURPOSE:
-  - Consolidates all security-related logic, including nonce validation
-    and inventory validation, into a single, robust module.
+  - Consolidates all security-related logic, including nonce validation,
+    inventory validation, and rate-limiting, into a single, robust module.
   - Upholds the "Never trust the client" principle by providing a single
     source of truth for all security checks.
 ================================================================================
@@ -13,6 +13,7 @@
 local HttpService = game:GetService("HttpService")
 local MemoryStoreService = game:GetService("MemoryStoreService")
 local Logger = require(script.Parent:WaitForChild("Logger"))
+local GameStateManager = require(script.Parent:WaitForChild("GameStateManager"))
 local SecurityManager = {}
 
 local TeleportNonces = MemoryStoreService:GetSortedMap("TeleportNonces")
@@ -39,6 +40,26 @@ local function RetryWithBackoff(operation, maxRetries, initialDelay)
 	end
 
 	return false, "Failed after " .. maxRetries .. " attempts"
+end
+
+-- ============================================================================
+-- LAYER 1: RATE LIMITING
+-- ============================================================================
+
+local playerRequestTimestamps = {}
+
+function SecurityManager:CheckRateLimit(player, cooldown)
+	cooldown = cooldown or 5
+	local now = tick()
+	local lastRequest = playerRequestTimestamps[player]
+
+	if lastRequest and (now - lastRequest < cooldown) then
+		Logger:Warn("Security-Layer1", string.format("Rate limit rejected for %s", player.Name))
+		return false, "Please wait before teleporting"
+	end
+
+	playerRequestTimestamps[player] = now
+	return true
 end
 
 -- ============================================================================

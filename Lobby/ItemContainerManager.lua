@@ -75,6 +75,7 @@ function ItemContainerManager:createItemBox(itemData)
 	icon.Position = UDim2.new(0, 5, 0, 5)
 	icon.BackgroundTransparency = 1
 	icon.Image = item.icon or "rbxassetid://12345" -- Default icon
+	icon.Active = false
 	icon.Parent = frame
 
 	local nameLabel = Instance.new("TextLabel")
@@ -87,6 +88,7 @@ function ItemContainerManager:createItemBox(itemData)
 	nameLabel.Font = Enum.Font.SourceSans
 	nameLabel.TextSize = 14
 	nameLabel.Text = item.name or "Unknown Item"
+	nameLabel.Active = false
 	nameLabel.Parent = frame
 
 	return frame
