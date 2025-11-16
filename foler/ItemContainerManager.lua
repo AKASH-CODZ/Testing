@@ -6,7 +6,7 @@
   - Manages the creation and rendering of inventory item UI elements.
   - Ensures a single, correctly configured UIGridLayout is used.
   - Fixes all visibility and transparency issues.
-
+  
   KEY CHANGES:
   - 'initialize' now finds or creates a SINGLE UIGridLayout, preventing conflicts.
   - 'createItemBox' now correctly uses item data passed from the server.
@@ -43,7 +43,7 @@ function ItemContainerManager:initialize(scrollingContainer)
 	gridLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 		scrollingContainer.CanvasSize = UDim2.new(0, 0, 0, gridLayout.AbsoluteContentSize.Y)
 	end)
-
+	
 	return state
 end
 
@@ -55,7 +55,8 @@ function ItemContainerManager:createItemBox(itemData)
 	-- The 'itemData' received here is the table with { data, count, equipped }
 	local item = itemData.data -- The actual item properties are inside 'data'
 
-	local frame = Instance.new("Frame")
+	local frame = Instance.new("TextButton")
+	frame.Text = ""
 	frame.Name = item.id or "ItemBox" -- Use item ID for the name for easier debugging
 	frame.Size = UDim2.new(0, 100, 0, 100)
 	frame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
@@ -87,7 +88,7 @@ function ItemContainerManager:createItemBox(itemData)
 	nameLabel.TextSize = 14
 	nameLabel.Text = item.name or "Unknown Item"
 	nameLabel.Parent = frame
-
+	
 	return frame
 end
 
