@@ -21,41 +21,29 @@ A robust game teleportation, loadout, and security system supporting multi-place
 ## Main Components
 
 ### 1. **UnifiedTeleportHandler**
-- **Purpose:** Handles outbound player teleport requests, collects player data, verifies security, packages all session/teleport data.
-- **Features:** Nonce generation, loadout handling, rate limits, retries, selection of target place.
+- **Purpose:** Handles both inbound and outbound player teleports. On outbound, it collects player data, validates the loadout, and generates a secure nonce. On inbound, it restores the player's state from teleport data or the datastore.
+- **Features:** Centralized teleportation logic, loadout handling, and player state restoration.
 
-### 2. **InboundTeleportHandler**
-- **Purpose:** Processes inbound joins to destination places, validates nonce, restores player state, logs all join info.
-- **Features:** Teleport validation (MemoryStore), loadout restoration, anti-replay protections.
+### 2. **SecurityManager**
+- **Purpose:** Consolidates all security-related logic. It creates and validates single-use nonces for teleports and validates all inventory and loadout data to prevent exploits.
+- **Features:** Nonce generation and validation, inventory and loadout validation.
 
-### 3. **NonceValidator**
-- **Purpose:** Creates and tracks single-use nonces for all teleports.
-- **Features:** Nonce saved to MemoryStore with TTL, checked on destination, deleted on join.
-- **Upgrade-ready:** TTL can be adjusted; supports future analytics/logging.
+### 3. **PlayerManager (PlayerDataManager)**
+- **Purpose:** Loads, saves, and manages all player data during a server session. It now includes mid-session auto-saving and a retry mechanism for robust data handling.
+- **Features:** Full loadout/ownership check, mid-session auto-saving, and a retry mechanism.
 
-### 4. **PlayerManager (PlayerDataManager)**
-- **Purpose:** Loads, saves, and manages all player data during a server session.
-- **Features:** Full loadout/ownership check, easily extended for cosmetics, stats, history.
+### 4. **GameConfig**
+- **Purpose:** A single source of truth for all static config and data, including item templates, admin user IDs, default player data, and teleport mode settings.
+- **Features:** Centralized configuration for all game settings.
 
-### 5. **GameConfig**
-- **Purpose:** All static config and data (item templates, valid admin user IDs, default loadout/data for new players).
-- **Features:** Central place for editing item stats, unlock requirements, etc.
+### 5. **QueueManager**
+- **Purpose:** Manages matchmaking/group queueing for team/competitive teleports.
+- **Features:** Automatically groups, checks, and teleports pre-validated teams as one.
 
 ### 6. **SecurityLayers**
 - **Purpose:** Core of all anti-abuse logic (rate limiting, game state checks, whitelisting).
 - **Features:** Fully upgradeable for new security policies, unlocks, bans, etc.
 
-### 7. **QueueManager**
-- **Purpose:** Manages matchmaking/group queueing for team/competitive teleports.
-- **Features:** Automatically groups, checks, and teleports pre-validated teams as one.
-
-### 8. **ConfigTeleport**
-- **Purpose:** Mode, place, and feature config for every teleportable area in the game.
-- **Features:** Allows instant mode reconfiguration—just edit PlaceIDs and mode settings in this table.
-
-### 9. **NetworkEvents**
-- **Purpose:** RemoteEvent hub for all client-server communication (teleport requests, loadout change command, status updates).
-- **Features:** Plug in new RemoteEvents here as you add features.
 
 ***
 
