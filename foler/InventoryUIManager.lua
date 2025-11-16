@@ -150,6 +150,21 @@ local function OnInventoryUpdated(inventory)
 	if inventoryGui then
 		inventoryGui.Visible = true
 	end
+
+	-- Initialize the search bar here to avoid race condition
+	if inventory and inventory.allItems then
+		print("[InventoryUIManager] Initializing search with " .. #inventory.allItems .. " items")
+		local searchState = SearchBarController:initialize(searchInput, inventory.allItems)
+		if searchState then
+			searchState.onSearchResult = function(filteredList)
+				print("[InventoryUIManager] Search results: " .. #filteredList .. " items")
+				ItemContainerManager:renderItems(containerState, filteredList)
+			end
+			print("[InventoryUIManager] Search bar ready")
+		else
+			warn("[InventoryUIManager] Failed to initialize search bar")
+		end
+	end
 end
 
 local function OnEquipmentChanged(itemId, isEquipped)
@@ -186,36 +201,7 @@ InventoryDataProvider:Initialize(
 -- SECTION 4: INITIALIZATION - PHASE 3: Setup Search Bar (Async)
 -- ============================================================================
 
-task.spawn(function()
-	print("[InventoryUIManager] Initializing search bar...")
-
-	local loaded = InventoryDataProvider:WaitUntilLoaded(10)
-
-	if not loaded then
-		warn("[InventoryUIManager] Timeout waiting for inventory")
-		return
-	end
-
-	local inventory = InventoryDataProvider:GetInventory()
-	if not inventory or not inventory.allItems then
-		warn("[InventoryUIManager] No inventory or allItems found")
-		return
-	end
-
-	local allItems = inventory.allItems
-	print("[InventoryUIManager] Initializing search with " .. #allItems .. " items")
-
-	local searchState = SearchBarController:initialize(searchInput, allItems)
-	if searchState then
-		searchState.onSearchResult = function(filteredList)
-			print("[InventoryUIManager] Search results: " .. #filteredList .. " items")
-			ItemContainerManager:renderItems(containerState, filteredList)
-		end
-		print("[InventoryUIManager] Search bar ready")
-	else
-		warn("[InventoryUIManager] Failed to initialize search bar")
-	end
-end)
+-- The search bar is now initialized in the OnInventoryUpdated callback
 
 -- ============================================================================
 -- SECTION 5: INITIALIZATION - PHASE 4: Setup Button Animations
