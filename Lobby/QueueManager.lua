@@ -156,12 +156,10 @@ function QueueManager:StartMatchFromQueue(mode, modeConfig, queue, safeTeleportF
 	Logger:Info("Queue", string.format("MATCH START - %s with %d players", mode, #queue.players))
 
 	local playersInMatch = {}
-	local dataPackagesForTeleport = {}
 
 	for i = 1, math.min(#queue.players, modeConfig.MaxPlayers) do
 		local plr = queue.players[i]
 		table.insert(playersInMatch, plr)
-		dataPackagesForTeleport[plr.UserId] = queue.dataPackages[plr.UserId]
 	end
 
 	for i = #playersInMatch, 1, -1 do
@@ -188,7 +186,6 @@ function QueueManager:StartMatchFromQueue(mode, modeConfig, queue, safeTeleportF
 	end
 
 	local teleportOptions = Instance.new("TeleportOptions")
-	teleportOptions:SetTeleportData(dataPackagesForTeleport)
 
 	if modeConfig.RequireReserveServer then
 		teleportOptions.ShouldReserveServer = true
