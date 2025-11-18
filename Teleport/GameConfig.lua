@@ -121,24 +121,6 @@ GameConfig.AllItems = {
 }
 
 -- ============================================================================
--- DEFAULT PLAYER DATA (Numbers only, never booleans!)
--- ============================================================================
-
-GameConfig.DefaultPlayerData = {
-	owned = {
-		["BasicSword"] = 1,        -- Count = 1
-		["IronArmor"] = 1,         -- Count = 1
-		["HealthPotion"] = 5       -- Count = 5
-	},
-	equipped = {
-		["BasicSword"] = true,
-		["IronArmor"] = true
-	},
-	gameState = "Lobby",
-	coins = 50,
-	gems = 0
-}
-
 -- ============================================================================
 -- TELEPORT MODES CONFIGURATION
 -- ============================================================================

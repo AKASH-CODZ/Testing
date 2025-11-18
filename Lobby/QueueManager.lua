@@ -10,10 +10,16 @@ Purpose: Matchmaking queue management
 
 local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
+local MemoryStoreService = game:GetService("MemoryStoreService")
+local ServerScriptService = game:GetService("ServerScriptService")
+
 local Logger = require(script.Parent:WaitForChild("Logger"))
+local PlayerManager = require(ServerScriptService:WaitForChild("Player"):WaitForChild("PlayerManager"))
+
 local QueueManager = {}
 
 local matchmakingQueues = {}
+local MemoryStoreQueue = MemoryStoreService:GetQueue("Loadouts", 60)
 
 -- ============================================================================
 -- QUEUE CLEANUP
@@ -185,7 +191,19 @@ function QueueManager:StartMatchFromQueue(mode, modeConfig, queue, safeTeleportF
 		return false
 	end
 
+	local reservedServerAccessCode = result
+	local loadouts = {}
+	for _, plr in ipairs(playersInMatch) do
+		local profile = PlayerManager:GetProfile(plr)
+		if profile then
+			loadouts[tostring(plr.UserId)] = profile.Data.equipped
+		end
+	end
+
+	MemoryStoreQueue:AddAsync(reservedServerAccessCode, loadouts)
+
 	local teleportOptions = Instance.new("TeleportOptions")
+	teleportOptions.ReservedServerAccessCode = reservedServerAccessCode
 
 	if modeConfig.RequireReserveServer then
 		teleportOptions.ShouldReserveServer = true
