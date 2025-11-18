@@ -126,14 +126,6 @@ function PlayerDataManager:LoadData(player)
 		data = DeepCopy(GameConfig.DefaultPlayerData)
 	end
 
-	if not data.stats then
-		data.stats = {
-			totalWins = 0,
-			totalLosses = 0,
-			StandardModePlays = 0,
-		}
-	end
-
 	sessionData[userId] = data
 	return data
 end
