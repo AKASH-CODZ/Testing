@@ -37,6 +37,9 @@ UpdateEquippedItem.Name = "UpdateEquippedItem"
 local InventoryUpdated = Remotes:FindFirstChild("InventoryUpdated") or Instance.new("RemoteEvent", Remotes)
 InventoryUpdated.Name = "InventoryUpdated"
 
+local RequestTeleportToMatch = Remotes:FindFirstChild("RequestTeleportToMatch") or Instance.new("RemoteEvent", Remotes)
+RequestTeleportToMatch.Name = "RequestTeleportToMatch"
+
 -- ============================================================================
 -- GET INVENTORY
 -- ============================================================================
