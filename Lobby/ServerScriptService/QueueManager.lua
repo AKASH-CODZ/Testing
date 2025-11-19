@@ -23,6 +23,12 @@ local QueueManager = {}
 local matchmakingQueues = {}
 local MemoryStoreQueue = MemoryStoreService:GetQueue("Loadouts", 60)
 
+local Remotes = ReplicatedStorage:FindFirstChild("Remotes") or Instance.new("Folder", ReplicatedStorage)
+Remotes.Name = "Remotes"
+
+local RequestTeleportToMatch = Remotes:FindFirstChild("RequestTeleportToMatch") or Instance.new("RemoteEvent", Remotes)
+RequestTeleportToMatch.Name = "RequestTeleportToMatch"
+
 -- ============================================================================
 -- QUEUE CLEANUP
 -- ============================================================================

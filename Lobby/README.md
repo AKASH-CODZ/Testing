@@ -11,14 +11,17 @@ This directory contains all the scripts for the Lobby place.
 
 ## Modules (`ReplicatedStorage/Modules`)
 
-*   **`ButtonAnimationController.lua`:** Handles all button animations and effects.
 *   **`GameConfig.lua`:** Single source of truth for all game configuration.
 *   **`GameStateManager.lua`:** Manages the state of each player.
-*   **`InventoryDataProvider.lua`:** Manages inventory data on the client side.
-*   **`ItemContainerManager.lua`:** Manages the creation and rendering of inventory item UI elements.
 *   **`Logger.lua`:** Provides a simple and robust logging system.
 *   **`PlayerDataHandler.lua`:** Defines the data structure for player profiles.
 *   **`ProfileService.lua`:** The core `ProfileService` module.
+
+### Inventory_Ui
+
+*   **`ButtonAnimationController.lua`:** Handles all button animations and effects.
+*   **`InventoryDataProvider.lua`:** Manages inventory data on the client side.
+*   **`ItemContainerManager.lua`:** Manages the creation and rendering of inventory item UI elements.
 *   **`SearchBarController.lua`:** Manages the search bar functionality.
 
 ## Client Scripts (`StarterPlayer/StarterPlayerScripts`)

@@ -14,9 +14,11 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local PlayerDataManager = require(ServerScriptService:WaitForChild("PlayerManager"))
 
-local RequestTeleportToLobby = Instance.new("RemoteEvent")
+local Remotes = ReplicatedStorage:FindFirstChild("Remotes") or Instance.new("Folder", ReplicatedStorage)
+Remotes.Name = "Remotes"
+
+local RequestTeleportToLobby = Remotes:FindFirstChild("RequestTeleportToLobby") or Instance.new("RemoteEvent", Remotes)
 RequestTeleportToLobby.Name = "RequestTeleportToLobby"
-RequestTeleportToLobby.Parent = ReplicatedStorage
 
 RequestTeleportToLobby.OnServerEvent:Connect(function(player)
     local profile = PlayerDataManager:GetProfile(player)

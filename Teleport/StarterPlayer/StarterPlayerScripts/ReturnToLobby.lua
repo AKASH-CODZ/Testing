@@ -29,6 +29,7 @@ returnButton.Parent = playerGui
 -- ============================================================================
 
 returnButton.MouseButton1Click:Connect(function()
-	local RequestTeleportToLobby = ReplicatedStorage:WaitForChild("RequestTeleportToLobby")
+	local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+	local RequestTeleportToLobby = Remotes:WaitForChild("RequestTeleportToLobby")
 	RequestTeleportToLobby:FireServer()
 end)

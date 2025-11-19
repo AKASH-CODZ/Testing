@@ -42,8 +42,9 @@ InventoryUpdated.Name = "InventoryUpdated"
 -- ============================================================================
 
 GetPlayerInventory.OnServerEvent:Connect(function(player)
-	local playerData = PlayerDataManager:GetData(player)
-	if not playerData then return end
+	local profile = PlayerDataManager:GetProfile(player)
+	if not profile then return end
+	local playerData = profile.Data
 
 	local ownedItems = {}
 	for itemId, count in pairs(playerData.owned) do
@@ -69,8 +70,9 @@ end)
 -- ============================================================================
 
 UpdateEquippedItem.OnServerEvent:Connect(function(player, itemId, shouldEquip)
-	local playerData = PlayerDataManager:GetData(player)
-	if not playerData then return end
+	local profile = PlayerDataManager:GetProfile(player)
+	if not profile then return end
+	local playerData = profile.Data
 
 	if GameStateManager:GetPlayerState(player) ~= GameStateManager.States.LOBBY then
 		InventoryUpdated:FireClient(player, {status = "error", message = "Cannot equip while not in lobby"})
@@ -87,7 +89,6 @@ UpdateEquippedItem.OnServerEvent:Connect(function(player, itemId, shouldEquip)
 		playerData.equipped[itemId] = nil
 	end
 
-	PlayerDataManager:SaveData(player, playerData)
 	InventoryUpdated:FireClient(player, {
 		status = "success",
 		action = shouldEquip and "equipped" or "unequipped",

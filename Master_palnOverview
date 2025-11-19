@@ -1,71 +1,82 @@
-Here is a **full updated README.md (in markdown)** describing every function, module, and feature of your current Roblox game and teleportation/security system:
-
-***
-
 # Roblox COP Chaser Game README
 
 ## Overview
 
-A robust game teleportation, loadout, and security system supporting multi-place experiences, player personalization, high security, and admin debugging.
+This document outlines the architecture of the Roblox COP Chaser game, a multi-place experience with a focus on data persistence, security, and modular design.
 
 ***
 
 ## Game Architecture
 
-- **Two-Place Structure:** The game is divided into two separate places: the **Lobby** and the **Teleport** place. This provides a clean separation of concerns and allows for a more robust and scalable architecture.
+- **Two-Place Structure:** The game is divided into two separate places: the **Lobby** for pre-game activities and the **Teleport** place for the main gameplay. This provides a clean separation of concerns and allows for a more robust and scalable architecture.
+- **Universe Sharing:** All places within this experience (Lobby, Game Places, etc.) share the same `DataStore` backend. This allows for seamless data persistence without the need to pass data between places using `TeleportService`.
+- **ProfileService:** `ProfileService` is a session-locking `DataStore` wrapper that ensures data integrity and prevents data loss. It works by "locking" a player's profile when they join a server, preventing other servers from writing to their data simultaneously.
 - **Modular Design:** Each core script/module serves a clear function, making it easy to extend, upgrade, or swap.
-- **Secure Data Transfer:** All important session and player data is server-generated and validated.
 
 ***
 
 ## Project Structure
 
-The project is organized into two main folders: `Lobby` and `Teleport`.
+The project is organized into two main folders: `Lobby` and `Teleport`, each containing subdirectories that mirror the Roblox game engine's hierarchy.
 
 ### `Lobby`
 
 This folder contains all the scripts and modules necessary for the lobby experience.
 
-*   **`TeleportRequestHandler.lua`:** Listens for teleport requests from the client and initiates the teleport process.
-*   **`StandardModeButton.lua`:** Handles the functionality of a UI button that initiates a teleport to a specific game mode.
-*   **`InventoryUIManager.lua`:** Manages the inventory UI, including the search bar, item display, and toggle functionality.
-*   **`InventoryDataProvider.lua`:** Manages inventory data on the client side.
-*   **`ButtonAnimationController.lua`:** Handles all button animations and effects.
-*   **`ItemContainerManager.lua`:** Manages the creation and rendering of inventory item UI elements.
-*   **`SearchBarController.lua`:** Manages the search bar functionality, including filtering and debouncing.
+*   **`ServerScriptService`:**
+    *   **`InventoryService.lua`:** Manages the player's inventory on the server.
+    *   **`PlayerManager.lua`:** Manages loading and saving of player data using `ProfileService`.
+    *   **`QueueManager.lua`:** Manages matchmaking queues for various game modes.
+    *   **`SecurityManager.lua`:** Consolidates all security-related logic.
+*   **`ReplicatedStorage/Modules`:**
+    *   **`GameConfig.lua`:** A single source of truth for all static config and data.
+    *   **`GameStateManager.lua`:** Manages the state of each player.
+    *   **`Logger.lua`:** Provides a simple and robust logging system.
+    *   **`PlayerDataHandler.lua`:** Defines the data structure for player profiles.
+    *   **`ProfileService.lua`:** The core `ProfileService` module.
+    *   **`Inventory_Ui/`:**
+        *   **`ButtonAnimationController.lua`:** Handles all button animations and effects.
+        *   **`InventoryDataProvider.lua`:** Manages inventory data on the client side.
+        *   **`ItemContainerManager.lua`:** Manages the creation and rendering of inventory item UI elements.
+        *   **`SearchBarController.lua`:** Manages the search bar functionality.
+*   **`StarterPlayer/StarterPlayerScripts`:**
+    *   **`InventoryUIManager.lua`:** Manages the inventory UI.
+    *   **`StandardModeButton.lua`:** Handles the functionality of a UI button that initiates a teleport.
 
 ### `Teleport`
 
 This folder contains all the scripts and modules necessary for the gameplay experience in the teleported place.
 
-*   **`GameplayManager.lua`:** Manages the gameplay logic, creates the "Win" and "Loss" blocks, and securely updates player stats and rewards.
-*   **`ReturnToLobby.lua`:** Manages the "Return to Lobby" button and securely requests a teleport back to the lobby.
-
-### Common Modules
-
-These core modules are duplicated in both the `Lobby` and `Teleport` folders to ensure that each place can function independently.
-
-*   **`PlayerManager.lua`:** Loads, saves, and manages all player data.
-*   **`SecurityManager.lua`:** Consolidates all security-related logic, including nonce validation, inventory validation, and rate-limiting.
-*   **`GameConfig.lua`:** A single source of truth for all static config and data.
-*   **`GameStateManager.lua`:** Manages the state of each player.
-*   **`Logger.lua`:** Provides a simple and robust logging system.
+*   **`ServerScriptService`:**
+    *   **`GameplayManager.lua`:** Manages the gameplay logic.
+    *   **`LoadoutManager.lua`:** Retrieves player loadouts from the `MemoryStoreQueue`.
+    *   **`PlayerManager.lua`:** Manages loading and saving of player data using `ProfileService`.
+    *   **`SecurityManager.lua`:** Consolidates all security-related logic.
+    *   **`TeleportManager.lua`:** Handles teleportation requests from clients.
+*   **`ReplicatedStorage/Modules`:**
+    *   **`GameConfig.lua`:** A single source of truth for all static config and data.
+    *   **`GameStateManager.lua`:** Manages the state of each player.
+    *   **`Logger.lua`:** Provides a simple and robust logging system.
+    *   **`PlayerDataHandler.lua`:** Defines the data structure for player profiles.
+    *   **`ProfileService.lua`:** The core `ProfileService` module.
+*   **`StarterPlayer/StarterPlayerScripts`:**
+    *   **`ReturnToLobby.lua`:** Manages the "Return to Lobby" button.
 
 ***
 
 ## Main Components
 
-### 1. **UnifiedTeleportHandler**
-- **Purpose:** Handles both inbound and outbound player teleports. On outbound, it collects player data, validates the loadout, and generates a secure nonce. On inbound, it restores the player's state from teleport data or the datastore.
-- **Features:** Centralized teleportation logic, loadout handling, and player state restoration.
+### 1. **ProfileService**
+- **Purpose:** A stand-alone ModuleScript that specialises in loading and auto-saving DataStore profiles. This is the core of the "Universe Sharing" data model.
+- **Features:** Session-locking, data reconciliation, and auto-saving.
 
-### 2. **SecurityManager**
-- **Purpose:** Consolidates all security-related logic. It creates and validates single-use nonces for teleports and validates all inventory and loadout data to prevent exploits.
+### 2. **PlayerManager**
+- **Purpose:** Manages loading and saving of player data using ProfileService.
+- **Features:** Handles loading and releasing player profiles when they join and leave the server.
+
+### 3. **SecurityManager**
+- **Purpose:** Consolidates all security-related logic.
 - **Features:** Nonce generation and validation, inventory and loadout validation, and rate-limiting.
-
-### 3. **PlayerManager (PlayerDataManager)**
-- **Purpose:** Loads, saves, and manages all player data during a server session. It now includes mid-session auto-saving and a retry mechanism for robust data handling.
-- **Features:** Full loadout/ownership check, mid-session auto-saving, and a retry mechanism.
 
 ### 4. **GameConfig**
 - **Purpose:** A single source of truth for all static config and data, including item templates, admin user IDs, default player data, and teleport mode settings.
@@ -77,41 +88,26 @@ These core modules are duplicated in both the `Lobby` and `Teleport` folders to 
 
 ***
 
-## Player Features
+## Data Flow
 
-- **Secure Teleport and Session Transfer**
-  - Players join/teleport with full loadout/server state.
-  - Only valid, owned items can be equipped/used.
-  - Nonce system blocks any exploit/replay attempts.
-- **Configurable Loadout (Upgrade Plan)**
-  - GUI for player to select loadout from owned list.
-  - Server side validates all items before teleport.
-  - Future: rate limiting, admin recovery, log events on suspicious changes.
-- **Matchmaking/Queue (if enabled)**
-  - Join group sessions, competitive modes, secure transfer for all team members.
-
-***
-
-## Admin & QA Tools
-
-- **Data Viewer GUI:**  
-  Inspect server/client/loadout data in real time.
-- **Destination Server Debug Log:**  
-  Prints all incoming session, loadout, nonce state.
-- **Full Console Logging:**  
-  Easy to trace issues, security events, and teleport outcome.
+1.  **Player Joins Lobby:** The `PlayerManager` in the `Lobby` loads the player's profile using `ProfileService`.
+2.  **Player Enters Game Place:** The player is teleported to a game place.
+3.  **Player Joins Game Place:** The `PlayerManager` in the `Game Place` loads the player's profile. `ProfileService` handles the session lock, ensuring that the `Lobby`'s session is released before the `Game Place`'s session is acquired.
+4.  **Player Wins Match:** The `GameplayManager` in the `Game Place` updates the `TotalWins` value directly in the player's profile data.
+5.  **Player Returns to Lobby:** The `TeleportManager` in the `Game Place` releases the player's profile using `profile:Release()`. This saves the updated data to the `DataStore` and releases the session lock.
+6.  **Player Rejoins Lobby:** The `PlayerManager` in the `Lobby` re-loads the player's profile, which now contains the updated `TotalWins` value.
 
 ***
 
 ## Troubleshooting
 
-- **Error 267 (security/nonce):**  
+- **Error 267 (security/nonce):**
   Confirm both places are published in the same Roblox universe, and join only through lobby-driven teleport.
-- **TeleportData = NO:**  
+- **TeleportData = NO:**
   Means destination place was launched directly, not via teleport.
-- **Failed to translate string warning:**  
+- **Failed to translate string warning:**
   Harmless Roblox message—ignore.
-- **Other issues:**  
+- **Other issues:**
   Use detailed printouts, confirm PlaceId/GameId, nonce, and session data at each phase; reboot, republish, and always test upgrades live.
 
 ***
@@ -121,23 +117,3 @@ These core modules are duplicated in both the `Lobby` and `Teleport` folders to 
 - Only ever teleport players from the lobby/main place—never “Play” destination place directly.
 - Always validate item ownership both client and server side on future upgrades.
 - For complete feature/testing updates, document all new RemoteEvents and loadout validations in this README as you extend.
-
-***
-
-## Future/Upgrade Notes
-
-- Add client-side loadout editor, server validation.
-- Add admin in-game commands for instant loadout/debugging.
-- Extend SecurityLayers for new anti-cheat logic.
-- Integrate with analytics as needed for tracking teleport/nonce activity.
-
-***
-
-## Credits
-
-- Core architecture and scripting: You!
-- Feature/test suggestions: Roblox dev community & QA testers
-
-***
-
-**This README and architecture summary provides everything needed for future upgrades, onboarding new team members, and maintaining high-quality teleport/game security!**

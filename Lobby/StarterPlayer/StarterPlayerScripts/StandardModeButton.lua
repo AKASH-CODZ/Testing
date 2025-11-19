@@ -23,6 +23,7 @@ local BUTTON_MODE = "Training" -- Options: StandardMode, Training, TeamDeathmatc
 -- ============================================================================
 
 script.Parent.MouseButton1Click:Connect(function()
-	local RequestTeleportToMatch = ReplicatedStorage:WaitForChild("RequestTeleportToMatch")
+	local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+	local RequestTeleportToMatch = Remotes:WaitForChild("RequestTeleportToMatch")
 	RequestTeleportToMatch:FireServer(BUTTON_MODE)
 end)
