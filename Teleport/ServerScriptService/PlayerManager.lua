@@ -10,10 +10,12 @@
 
 local Players = game:GetService("Players")
 local ServerScriptService = game:GetService("ServerScriptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Modules = ReplicatedStorage:WaitForChild("Modules")
 
-local ProfileService = require(script.Parent:WaitForChild("ProfileService"))
-local PlayerDataHandler = require(script.Parent:WaitForChild("PlayerDataHandler"))
-local Logger = require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Logger"))
+local ProfileService = require(Modules:WaitForChild("ProfileService"))
+local PlayerDataHandler = require(Modules:WaitForChild("PlayerDataHandler"))
+local Logger = require(Modules:WaitForChild("Logger"))
 
 local PlayerDataManager = {}
 

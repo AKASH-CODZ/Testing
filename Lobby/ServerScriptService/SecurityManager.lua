@@ -11,8 +11,10 @@
 
 local HttpService = game:GetService("HttpService")
 local MemoryStoreService = game:GetService("MemoryStoreService")
-local Logger = require(script.Parent:WaitForChild("Logger"))
-local GameStateManager = require(script.Parent:WaitForChild("GameStateManager"))
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Modules = ReplicatedStorage:WaitForChild("Modules")
+local Logger = require(Modules:WaitForChild("Logger"))
+local GameStateManager = require(Modules:WaitForChild("GameStateManager"))
 local SecurityManager = {}
 
 local TeleportNonces = MemoryStoreService:GetSortedMap("TeleportNonces")

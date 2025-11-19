@@ -20,10 +20,11 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- MODULE IMPORTS
 -- ============================================================================
 
-local ItemContainerManager = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Inventory_Ui"):WaitForChild("ItemContainerManager"))
-local ButtonAnimationController = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Inventory_Ui"):WaitForChild("ButtonAnimationController"))
-local SearchBarController = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Inventory_Ui"):WaitForChild("SearchBarController"))
-local InventoryDataProvider = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Inventory_Ui"):WaitForChild("InventoryDataProvider"))
+local Modules = ReplicatedStorage:WaitForChild("Modules")
+local ItemContainerManager = require(Modules:WaitForChild("ItemContainerManager"))
+local ButtonAnimationController = require(Modules:WaitForChild("ButtonAnimationController"))
+local SearchBarController = require(Modules:WaitForChild("SearchBarController"))
+local InventoryDataProvider = require(Modules:WaitForChild("InventoryDataProvider"))
 
 -- ============================================================================
 -- UI ELEMENT REFERENCES

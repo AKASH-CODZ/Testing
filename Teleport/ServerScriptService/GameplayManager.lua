@@ -15,7 +15,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 -- MODULE IMPORTS
 -- ============================================================================
 
-local PlayerDataManager = require(ServerScriptService:WaitForChild("Player"):WaitForChild("PlayerManager"))
+local PlayerDataManager = require(ServerScriptService:WaitForChild("PlayerManager"))
 
 -- ============================================================================
 -- CREATE WIN/LOSS BLOCKS

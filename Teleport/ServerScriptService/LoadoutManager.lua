@@ -9,7 +9,9 @@
 ]]
 
 local MemoryStoreService = game:GetService("MemoryStoreService")
-local Logger = require(script.Parent:WaitForChild("Logger"))
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Modules = ReplicatedStorage:WaitForChild("Modules")
+local Logger = require(Modules:WaitForChild("Logger"))
 
 local LoadoutManager = {}
 

@@ -16,10 +16,10 @@ local ServerScriptService = game:GetService("ServerScriptService")
 -- MODULE IMPORTS
 -- ============================================================================
 
-local PlayerDataManager = require(ServerScriptService:WaitForChild("Player"):WaitForChild("PlayerManager"))
-local SecurityManager = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("SecurityManager"))
+local PlayerDataManager = require(ServerScriptService:WaitForChild("PlayerManager"))
+local SecurityManager = require(ServerScriptService:WaitForChild("SecurityManager"))
 local GameStateManager = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameStateManager"))
-local GameConfig = require(game:GetService("ServerStorage"):WaitForChild("MyServerFolder"):WaitForChild("GameConfig"))
+local GameConfig = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("GameConfig"))
 
 -- ============================================================================
 -- REMOTE EVENTS

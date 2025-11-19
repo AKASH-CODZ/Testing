@@ -12,9 +12,11 @@ local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
 local MemoryStoreService = game:GetService("MemoryStoreService")
 local ServerScriptService = game:GetService("ServerScriptService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Modules = ReplicatedStorage:WaitForChild("Modules")
 
-local Logger = require(script.Parent:WaitForChild("Logger"))
-local PlayerManager = require(ServerScriptService:WaitForChild("Player"):WaitForChild("PlayerManager"))
+local Logger = require(Modules:WaitForChild("Logger"))
+local PlayerManager = require(ServerScriptService:WaitForChild("PlayerManager"))
 
 local QueueManager = {}
 

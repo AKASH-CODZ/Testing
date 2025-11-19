@@ -12,7 +12,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TeleportService = game:GetService("TeleportService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local PlayerDataManager = require(ServerScriptService:WaitForChild("Player"):WaitForChild("PlayerManager"))
+local PlayerDataManager = require(ServerScriptService:WaitForChild("PlayerManager"))
 
 local RequestTeleportToLobby = Instance.new("RemoteEvent")
 RequestTeleportToLobby.Name = "RequestTeleportToLobby"
