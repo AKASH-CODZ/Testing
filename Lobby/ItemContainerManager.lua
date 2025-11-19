@@ -1,16 +1,10 @@
 --[[
 ================================================================================
-  ItemContainerManager.lua - REFACTORED FOR VISIBILITY AND STABILITY
+  ItemContainerManager.lua
 ================================================================================
-  PURPOSE:
-  - Manages the creation and rendering of inventory item UI elements.
-  - Ensures a single, correctly configured UIGridLayout is used.
-  - Fixes all visibility and transparency issues.
-
-  KEY CHANGES:
-  - 'initialize' now finds or creates a SINGLE UIGridLayout, preventing conflicts.
-  - 'createItemBox' now correctly uses item data passed from the server.
-  - All UI elements are created with proper visibility settings from the start.
+  - **Purpose:** Manages the creation and rendering of inventory item UI elements.
+  - **Location:** ReplicatedStorage/Modules
+  - **Type:** ModuleScript
 ================================================================================
 ]]
 

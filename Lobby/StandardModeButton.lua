@@ -1,10 +1,11 @@
 --[[
 ================================================================================
-  StandardModeButton.lua - REFACTORED AND MODERNIZED
+  StandardModeButton.lua
 ================================================================================
-  PURPOSE:
-  - Handles the functionality of a UI button that initiates a teleport
+  - **Purpose:** Handles the functionality of a UI button that initiates a teleport
     to a specific game mode.
+  - **Location:** StarterPlayer/StarterPlayerScripts/UI
+  - **Type:** LocalScript
 ================================================================================
 ]]
 

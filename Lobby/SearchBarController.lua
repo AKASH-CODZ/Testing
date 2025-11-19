@@ -1,10 +1,10 @@
 --[[
 ================================================================================
-  SearchBarController.lua - REFACTORED AND MODERNIZED
+  SearchBarController.lua
 ================================================================================
-  PURPOSE:
-  - Manages the search bar functionality, including filtering and debouncing.
-  - Provides a better search algorithm.
+  - **Purpose:** Manages the search bar functionality, including filtering and debouncing.
+  - **Location:** ReplicatedStorage/Modules
+  - **Type:** ModuleScript
 ================================================================================
 ]]
 

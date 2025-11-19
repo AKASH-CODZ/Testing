@@ -1,11 +1,10 @@
 --[[
 ================================================================================
-  GameplayManager.lua - REFACTORED AND MODERNIZED
+  GameplayManager.lua
 ================================================================================
-  PURPOSE:
-  - Manages the gameplay logic for the teleported place.
-  - Creates the "Win" and "Loss" blocks.
-  - Securely updates player stats and rewards using ProfileService.
+  - **Purpose:** Manages the gameplay logic for the teleported place.
+  - **Location:** ServerScriptService
+  - **Type:** Script
 ================================================================================
 ]]
 

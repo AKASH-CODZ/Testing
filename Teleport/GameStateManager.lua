@@ -1,11 +1,10 @@
 --[[
 ================================================================================
-  GameStateManager.lua - REFACTORED AND MODERNIZED
+  GameStateManager.lua
 ================================================================================
-  PURPOSE:
-  - Manages the state of each player (e.g., Lobby, Playing, Dead).
-  - Provides a centralized and reliable way to check a player's status.
-  - Automatically cleans up data when a player leaves.
+  - **Purpose:** Manages the state of each player (e.g., Lobby, Playing, Dead).
+  - **Location:** ReplicatedStorage/Modules
+  - **Type:** ModuleScript
 ================================================================================
 ]]
 

@@ -1,10 +1,10 @@
 --[[
 ================================================================================
-  Logger.lua - REFACTORED AND MODERNIZED
+  Logger.lua
 ================================================================================
-  PURPOSE:
-  - Provides a simple and robust logging system.
-  - Supports admin-only messages.
+  - **Purpose:** Provides a simple and robust logging system.
+  - **Location:** ReplicatedStorage/Modules
+  - **Type:** ModuleScript
 ================================================================================
 ]]
 

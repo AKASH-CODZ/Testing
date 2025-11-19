@@ -1,11 +1,10 @@
 --[[
 ================================================================================
-  InventoryService.lua - REFACTORED AND MODERNIZED
+  InventoryService.lua
 ================================================================================
-  PURPOSE:
-  - Manages the player's inventory on the server.
-  - Handles requests to get, equip, and unequip items.
-  - Ensures that all inventory operations are secure and valid.
+  - **Purpose:** Manages the player's inventory on the server.
+  - **Location:** ServerScriptService
+  - **Type:** Script
 ================================================================================
 ]]
 

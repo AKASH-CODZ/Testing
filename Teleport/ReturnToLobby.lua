@@ -1,10 +1,10 @@
 --[[
 ================================================================================
-  ReturnToLobby.lua - REFACTORED AND MODERNIZED
+  ReturnToLobby.lua
 ================================================================================
-  PURPOSE:
-  - Manages the "Return to Lobby" button in the teleported place.
-  - Securely requests a teleport back to the lobby.
+  - **Purpose:** Manages the "Return to Lobby" button in the teleported place.
+  - **Location:** StarterPlayer/StarterPlayerScripts/UI
+  - **Type:** LocalScript
 ================================================================================
 ]]
 

@@ -1,3 +1,15 @@
+--[[
+================================================================================
+  ProfileService.lua
+================================================================================
+  - **Purpose:** A stand-alone ModuleScript that specialises in loading and
+    auto-saving DataStore profiles. This is the core of the "Universe Sharing"
+    data model.
+  - **Location:** ServerScriptService/Modules
+  - **Type:** ModuleScript
+================================================================================
+]]
+
 -- local Madwork = _G.Madwork
 --[[
 {Madwork}

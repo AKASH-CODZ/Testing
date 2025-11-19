@@ -1,3 +1,13 @@
+--[[
+================================================================================
+  PlayerDataHandler.lua
+================================================================================
+  - **Purpose:** Defines the data structure for player profiles.
+  - **Location:** ServerScriptService/Modules
+  - **Type:** ModuleScript
+================================================================================
+]]
+
 local PlayerDataHandler = {}
 
 PlayerDataHandler.ProfileTemplate = {

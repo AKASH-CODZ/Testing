@@ -1,10 +1,10 @@
 --[[
 ================================================================================
-  TeleportManager.lua - Handles teleportation requests
+  TeleportManager.lua
 ================================================================================
-  PURPOSE:
-  - Listens for teleport requests from clients.
-  - Releases the player's profile before teleporting.
+  - **Purpose:** Handles teleportation requests from clients.
+  - **Location:** ServerScriptService
+  - **Type:** Script
 ================================================================================
 ]]
 

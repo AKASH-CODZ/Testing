@@ -1,11 +1,10 @@
 --[[
 ================================================================================
-  InventoryDataProvider.lua - REFACTORED AND MODERNIZED
+  InventoryDataProvider.lua
 ================================================================================
-  PURPOSE:
-  - Manages inventory data on the client side.
-  - Bridges the UI with the server's inventory system.
-  - Handles equipment updates.
+  - **Purpose:** Manages inventory data on the client side.
+  - **Location:** ReplicatedStorage/Modules
+  - **Type:** ModuleScript
 ================================================================================
 ]]
 

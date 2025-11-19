@@ -1,12 +1,11 @@
 --[[
 ================================================================================
-  SecurityManager.lua - Consolidated Security Module
+  SecurityManager.lua
 ================================================================================
-  PURPOSE:
-  - Consolidates all security-related logic, including nonce validation,
+  - **Purpose:** Consolidates all security-related logic, including nonce validation,
     inventory validation, and rate-limiting, into a single, robust module.
-  - Upholds the "Never trust the client" principle by providing a single
-    source of truth for all security checks.
+  - **Location:** ReplicatedStorage/Modules
+  - **Type:** ModuleScript
 ================================================================================
 ]]
 

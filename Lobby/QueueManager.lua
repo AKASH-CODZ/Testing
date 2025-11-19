@@ -1,11 +1,11 @@
 --[[
-
-QueueManager.lua (UPDATED)
-
-Location: ReplicatedStorage/Modules/QueueManager.lua
-
-Purpose: Matchmaking queue management
-
+================================================================================
+  QueueManager.lua
+================================================================================
+  - **Purpose:** Manages matchmaking queues for various game modes.
+  - **Location:** ServerScriptService/Modules
+  - **Type:** ModuleScript
+================================================================================
 ]]
 
 local RunService = game:GetService("RunService")

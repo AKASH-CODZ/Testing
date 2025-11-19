@@ -1,7 +1,11 @@
 --[[
-PlayerManager.lua (Lobby)
-Location: ServerScriptService/Player/PlayerManager.lua (ModuleScript)
-PURPOSE: Load/save player data using ProfileService for session-locking and data integrity.
+================================================================================
+  PlayerManager.lua
+================================================================================
+  - **Purpose:** Manages loading and saving of player data using ProfileService.
+  - **Location:** ServerScriptService/Player
+  - **Type:** ModuleScript
+================================================================================
 ]]
 
 local Players = game:GetService("Players")

@@ -1,11 +1,11 @@
 --[[
 ================================================================================
-  InventoryUIManager.lua - REFACTORED AND MODERNIZED
+  InventoryUIManager.lua
 ================================================================================
-  PURPOSE:
-  - Manages the inventory UI, including the search bar, item display,
+  - **Purpose:** Manages the inventory UI, including the search bar, item display,
     and toggle functionality.
-  - Handles all user input for the inventory.
+  - **Location:** StarterPlayer/StarterPlayerScripts
+  - **Type:** LocalScript
 ================================================================================
 ]]
 

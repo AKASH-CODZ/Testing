@@ -1,7 +1,11 @@
 --[[
-LoadoutManager.lua (Teleport/Game Place)
-Location: ServerScriptService/LoadoutManager.lua (ModuleScript)
-PURPOSE: Retrieves player loadouts from the MemoryStoreQueue.
+================================================================================
+  LoadoutManager.lua
+================================================================================
+  - **Purpose:** Retrieves player loadouts from the MemoryStoreQueue.
+  - **Location:** ServerScriptService
+  - **Type:** ModuleScript
+================================================================================
 ]]
 
 local MemoryStoreService = game:GetService("MemoryStoreService")

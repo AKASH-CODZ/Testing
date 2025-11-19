@@ -1,8 +1,11 @@
 --[[
-GameConfig.lua
-Location: ServerStorage/MyServerFolder/GameConfig.lua (ModuleScript)
-PURPOSE: Single source of truth for all game configuration
-FIXES: Admin check works in studio + ingame, centralized item/default data
+================================================================================
+  GameConfig.lua
+================================================================================
+  - **Purpose:** Single source of truth for all game configuration.
+  - **Location:** ServerStorage/MyServerFolder
+  - **Type:** ModuleScript
+================================================================================
 ]]
 
 local GameConfig = {}
@@ -120,7 +123,6 @@ GameConfig.AllItems = {
 	}
 }
 
--- ============================================================================
 -- ============================================================================
 -- TELEPORT MODES CONFIGURATION
 -- ============================================================================

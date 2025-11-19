@@ -1,10 +1,10 @@
 --[[
 ================================================================================
-  ButtonAnimationController.lua - REFACTORED AND MODERNIZED
+  ButtonAnimationController.lua
 ================================================================================
-  PURPOSE:
-  - Handles all button animations and effects.
-  - Provides a simple and reusable way to add visual feedback to UI elements.
+  - **Purpose:** Handles all button animations and effects.
+  - **Location:** ReplicatedStorage/Modules
+  - **Type:** ModuleScript
 ================================================================================
 ]]
 
