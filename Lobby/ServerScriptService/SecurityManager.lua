@@ -17,7 +17,14 @@ local Logger = require(Modules:WaitForChild("Logger"))
 local GameStateManager = require(Modules:WaitForChild("GameStateManager"))
 local SecurityManager = {}
 
-local TeleportNonces = MemoryStoreService:GetSortedMap("TeleportNonces")
+local success, TeleportNonces = pcall(function()
+	return MemoryStoreService:GetSortedMap("TeleportNonces")
+end)
+
+if not success then
+	Logger:Error("SecurityManager", "Failed to get MemoryStoreService SortedMap. Nonce validation will be disabled.")
+	TeleportNonces = nil
+end
 
 -- ============================================================================
 -- HELPER: Retry with exponential backoff
@@ -68,6 +75,7 @@ end
 -- ============================================================================
 
 function SecurityManager:GenerateAndSaveNonce(player, ttl)
+	if not TeleportNonces then return nil end
 	ttl = ttl or 60
 	local nonce = HttpService:GenerateGUID(false)
 
@@ -89,6 +97,7 @@ end
 -- ============================================================================
 
 function SecurityManager:ValidateNonce(player, nonce)
+	if not TeleportNonces then return false end
 	if not nonce or type(nonce) ~= "string" then
 		Logger:Warn("Nonce", string.format("Invalid nonce format for %s", player.Name))
 		return false
