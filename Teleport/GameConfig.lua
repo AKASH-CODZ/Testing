@@ -202,6 +202,55 @@ GameConfig.TeleportModes = {
 
 
 -- ============================================================================
+-- ASU SYSTEM CONFIGURATION
+-- ============================================================================
+GameConfig.ASU_SYSTEM = {
+    MapData = {
+        ["M1_City"] = {
+            ASUDeployments = {
+                {
+                    Position = CFrame.new(0, 10, 0),
+                    WeaponType = "Standard",
+                    InitialDifficulty = "Normal",
+                    ActivationRange = 100
+                },
+                {
+                    Position = CFrame.new(50, 10, 50),
+                    WeaponType = "Sniper",
+                    InitialDifficulty = "Hard",
+                    ActivationRange = 200
+                }
+            }
+        }
+    },
+    Weapons = {
+        ["Standard"] = {
+            FireRate = 5, -- Shots per second
+            Damage = 10,
+            BaseSpread = 5, -- degrees
+            Range = 500
+        },
+        ["Sniper"] = {
+            FireRate = 1,
+            Damage = 50,
+            BaseSpread = 1,
+            Range = 2000
+        }
+    },
+    DifficultySettings = {
+        ["Easy"] = {
+            AccuracyMultiplier = 1.5
+        },
+        ["Normal"] = {
+            AccuracyMultiplier = 1.0
+        },
+        ["Hard"] = {
+            AccuracyMultiplier = 0.5
+        }
+    }
+}
+
+-- ============================================================================
 -- MIGRATE: Old format (bool) to new format (count)
 -- ============================================================================
 

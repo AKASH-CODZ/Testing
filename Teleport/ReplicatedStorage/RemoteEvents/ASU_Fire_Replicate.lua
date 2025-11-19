@@ -1,0 +1,2 @@
+-- This file represents the ASU_Fire_Replicate RemoteEvent.
+-- In a real Roblox environment, this would be a RemoteEvent instance.
